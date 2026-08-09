@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBER DATA NEXUS — Manage Your Digital Universe</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+  <style>
+    /* ── Split layout ── */
+    .split-wrap {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      padding-top: 56px;
+    }
+    @media (max-width: 900px) {
+      .split-wrap { grid-template-columns: 1fr; }
+      .split-left  { display: none; }
+    }
+
+    /* ── Left: scrollable landing content ── */
+    .split-left {
+      overflow-y: auto;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    /* ── Right: sticky auth panel ── */
+    .split-right {
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 40px;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+    }
+
+    /* ── Hero (compact, no min-height: 100vh) ── */
+    .hero {
+      min-height: unset;
+      padding: 60px 48px 48px;
+    }
+    .hero-content {
+      max-width: 100%;
+      padding: 0;
+    }
+    .hero-title {
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+    }
+
+    /* ── Features, workflow, cta smaller padding ── */
+    .features {
+      padding: 48px 48px;
+    }
+    .workflow {
+      padding: 40px 48px;
+    }
+    .cta-section {
+      padding: 40px 48px 60px;
+    }
+    .cta-box {
+      padding: 40px 32px;
+    }
+    .hero-stats {
+      gap: 24px;
+    }
+    .page-footer {
+      padding: 20px 48px;
+    }
+
+    /* ── Auth card sizing ── */
+    .auth-card {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    /* ── Scrollbar for left panel ── */
+    .split-left::-webkit-scrollbar { width: 4px; }
+    .split-left::-webkit-scrollbar-track { background: transparent; }
+    .split-left::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body class="page-body">
+
+  <!-- NAV -->
+  <nav class="page-nav">
+    <a href="{{ url_for('home') }}" class="brand">
+      <span class="brand-icon">⚡</span>
+      <span class="brand-name">CYBER DATA NEXUS</span>
+    </a>
+    <div class="nav-links">
+      <a href="{{ url_for('home') }}" class="nav-link active">Home</a>
+    </div>
+  </nav>
+
+  <div class="split-wrap">
+
+    <!-- ══════════════════════════════════════════
+         LEFT — landing content
+    ══════════════════════════════════════════ -->
+    <div class="split-left">
+
+      <!-- HERO -->
+      <section class="hero">
+        <div class="hero-bg">
+          <div class="hero-grid"></div>
+          <div class="hero-orb hero-orb-1"></div>
+          <div class="hero-orb hero-orb-2"></div>
+          <div class="hero-orb hero-orb-3"></div>
+        </div>
+        <div class="hero-content landing-wrap">
+          <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            SYSTEM ONLINE
+          </div>
+          <h1 class="hero-title">
+            Your Data.<br>
+            <span class="hero-title-accent">Total Control.</span>
+          </h1>
+          <p class="hero-subtitle">
+            CYBER DATA NEXUS — це потужна платформа для управління, організації та аналізу ваших файлів у кіберпросторі. Швидко. Безпечно. Елегантно.
+          </p>
+        </div>
+      </section>
+
+      <!-- FEATURES -->
+      <section class="features">
+        <div class="section-header">
+          <span class="section-tag">// CAPABILITIES</span>
+          <h2 class="section-title">Everything you need to control your data</h2>
+          <p class="section-sub">Від базового зберігання до просунутої аналітики — все в одному місці</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <span class="feature-icon">🗂️</span>
+            <div class="feature-title">Smart Categories</div>
+            <p class="feature-desc">Автоматична класифікація файлів по категоріях і підкатегоріях. Розумний пошук знайде будь-що за секунди.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🏷️</span>
+            <div class="feature-title">Tag System</div>
+            <p class="feature-desc">Гнучка система тегів дозволяє миттєво фільтрувати і знаходити потрібні файли без зусиль.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">📊</span>
+            <div class="feature-title">Analytics Dashboard</div>
+            <p class="feature-desc">Детальна статистика використання сховища, динаміка завантажень та звіти активності в реальному часі.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🔒</span>
+            <div class="feature-title">AES-256 Encryption</div>
+            <p class="feature-desc">Всі файли захищені шифруванням військового рівня. Ваші дані — лише ваші. Завжди.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">⬇️</span>
+            <div class="feature-title">Bulk Operations</div>
+            <p class="feature-desc">Масові завантаження, переміщення, теги та видалення. Керуйте сотнями файлів одним рухом.</p>
+          </div>
+          <div class="feature-card">
+            <span class="feature-icon">🔔</span>
+            <div class="feature-title">Smart Alerts</div>
+            <p class="feature-desc">Інтелектуальні сповіщення про зміни, перевищення квот та підозрілу активність у вашому сховищі.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- WORKFLOW -->
+      <section class="workflow">
+        <div class="workflow-inner">
+          <div class="section-header">
+            <span class="section-tag">// HOW IT WORKS</span>
+            <h2 class="section-title">Up and running in 60 seconds</h2>
+          </div>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">01</div>
+              <div class="step-label">Create Account</div>
+              <p class="step-desc">Реєстрація займає менше хвилини</p>
+            </div>
+            <div class="step">
+              <div class="step-num">02</div>
+              <div class="step-label">Upload Files</div>
+              <p class="step-desc">Drag & drop або через меню</p>
+            </div>
+            <div class="step">
+              <div class="step-num">03</div>
+              <div class="step-label">Organize</div>
+              <p class="step-desc">Теги, категорії, підпапки</p>
+            </div>
+            <div class="step">
+              <div class="step-num">04</div>
+              <div class="step-label">Access Anywhere</div>
+              <p class="step-desc">З будь-якого пристрою 24/7</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <div class="cta-box">
+          <h2 class="cta-title">Ready to take control?</h2>
+          <p class="cta-text">Приєднуйтесь до тисяч користувачів, які вже керують своїми даними в CYBER DATA NEXUS.</p>
+          <button class="btn-primary" onclick="document.getElementById('regPassword') && document.querySelector('[data-tab=register]').click(); document.querySelector('.split-right').scrollIntoView({behavior:'smooth'})">
+            ⚡ Create Free Account
+          </button>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="page-footer">
+        <span class="footer-brand">⚡ CYBER DATA NEXUS</span>
+        <span>© 2026 All rights reserved</span>
+      </footer>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         RIGHT — auth forms
+    ══════════════════════════════════════════ -->
+    <div class="split-right">
+      <div class="auth-card">
+
+        <!-- TABS -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">Sign In</button>
+          <button class="auth-tab" data-tab="register">Register</button>
+        </div>
+
+        <h2 class="auth-title" id="authTitle">Welcome back</h2>
+        <p class="auth-subtitle" id="authSubtitle">Sign in to your CYBER DATA NEXUS workspace</p>
+
+        <!-- LOGIN FORM -->
+        <div class="auth-form" data-form="login" style="display:block">
+          <form id="loginForm" novalidate>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" placeholder="cyber@nexus.io" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="form-input-wrap">
+                <input type="password" class="form-input" placeholder="••••••••" autocomplete="current-password" required style="padding-right:40px">
+                <span class="form-input-icon" data-toggle-pass>👁</span>
+              </div>
+            </div>
+            <button type="submit" class="btn-full">⚡ Sign In</button>
+          </form>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div class="auth-form" data-form="register" style="display:none">
+          <form id="registerForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-input" placeholder="Neo" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-input" placeholder="Anderson" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Username</label>
+              <input type="text" class="form-input" placeholder="@cyber_user" autocomplete="username" required>
+              <span class="form-hint">Буде видно іншим у системі</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" placeholder="cyber@nexus.io" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="form-input-wrap">
+                <input type="password" id="regPassword" class="form-input" placeholder="••••••••" autocomplete="new-password" required style="padding-right:40px">
+                <span class="form-input-icon" data-toggle-pass>👁</span>
+              </div>
+              <div class="password-strength">
+                <div class="password-strength-bar"></div>
+              </div>
+              <span class="form-hint strength-text"></span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm Password</label>
+              <div class="form-input-wrap">
+                <input type="password" class="form-input" placeholder="••••••••" autocomplete="new-password" required style="padding-right:40px">
+                <span class="form-input-icon" data-toggle-pass>👁</span>
+              </div>
+            </div>
+            <button type="submit" class="btn-full">⚡ Create Account</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- .split-wrap -->
+
+  <script src="{{ url_for('static', filename='js/pages.js') }}"></script>
+</body>
+</html>

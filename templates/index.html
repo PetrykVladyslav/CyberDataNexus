@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER DATA NEXUS</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=6">
+</head>
+<body>
+
+    <!-- MENU BAR -->
+    <div class="menubar">
+        <div class="menubar-brand">
+            <a href="{{ url_for('index') }}" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+                <span class="brand-icon">⚡</span>
+                <span class="brand-name">CYBER DATA NEXUS</span>
+            </a>
+        </div>
+        <nav class="menubar-nav">
+            <div class="menu-item">
+                <span class="menu-item-label">File</span>
+                <div class="menu-dropdown">
+                    <button class="menu-dd-item" id="menuUploadBtn">📤 Upload Files</button>
+                    <div class="menu-dd-sep"></div>
+                    <button class="menu-dd-item" id="menuSelectBtn">☑️ Select Mode</button>
+                    <div class="menu-dd-sep"></div>
+                    <button class="menu-dd-item" id="menuDownloadSelected" disabled>⬇️ Download Selected</button>
+                    <button class="menu-dd-item menu-dd-danger" id="menuDeleteSelected" disabled>🗑️ Delete Selected</button>
+                </div>
+            </div>
+            <div class="menu-item">
+                <span class="menu-item-label">Edit</span>
+                <div class="menu-dropdown">
+                    <button class="menu-dd-item" id="menuAddTagBtn">🏷️ Add Tag to Selected</button>
+                    <button class="menu-dd-item" id="menuRemoveTagBtn">🏷️ Remove Tag from Selected</button>
+                    <button class="menu-dd-item" id="menuMoveBtn">📂 Move to Category</button>
+                </div>
+            </div>
+            <div class="menu-item">
+                <span class="menu-item-label">View</span>
+                <div class="menu-dropdown">
+                    <button class="menu-dd-item view-mode-btn active-view" data-view="grid">⊞ Grid View</button>
+                    <button class="menu-dd-item view-mode-btn" data-view="list">☰ List View</button>
+                    <div class="menu-dd-sep"></div>
+                    <div class="menu-dd-zoom">
+                        <span class="menu-dd-zoom-label">🔍 Zoom</span>
+                        <div class="zoom-controls">
+                            <button class="zoom-btn" id="zoomOut">−</button>
+                            <span class="zoom-value" id="zoomValue">100%</span>
+                            <button class="zoom-btn" id="zoomIn">+</button>
+                            <button class="zoom-btn zoom-reset" id="zoomReset">↺</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="menu-item">
+                <span class="menu-item-label">Manage</span>
+                <div class="menu-dropdown">
+                    <button class="menu-dd-item" id="menuManageCategories">🗂️ Categories &amp; Subcategories</button>
+                </div>
+            </div>
+            <div class="menu-item analytics-menu-item">
+                <span class="menu-item-label">Analytics</span>
+                <div class="menu-dropdown">
+                    <button class="menu-dd-item" id="menuAnalytics">📊 Show Analytics</button>
+                </div>
+            </div>
+            <div class="menu-item">
+                <span class="menu-item-label">Help</span>
+                <div class="menu-dropdown">
+                    <button class="menu-dd-item" id="menuAbout">ℹ️ About</button>
+                </div>
+            </div>
+        </nav>
+        <div class="menubar-right">
+            <div class="stat-badge">
+                <span id="totalFiles">0</span>
+                <span class="stat-badge-label">files</span>
+            </div>
+            <div class="stat-badge">
+                <span id="totalSize">0 B</span>
+                <span class="stat-badge-label">storage</span>
+            </div>
+            <button class="bell-btn" id="alertsBellBtn" title="Smart Alerts">
+                <span class="bell-icon">🔔</span>
+                <span class="bell-badge" id="alertsBadge"></span>
+            </button>
+            <div class="search-wrap" style="position:relative">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="topbar-search" placeholder="Search files…">
+                <button id="searchClearBtn" class="search-clear-btn" title="Очистити пошук" aria-label="Очистити пошук">✕</button>
+            </div>
+            <!-- PROFILE BUTTON (new) -->
+            <a href="{{ url_for('profile') }}" class="profile-nav-btn" title="My Profile" style="
+                width:32px;height:32px;border-radius:50%;
+                background:linear-gradient(135deg,#7c3aed,#00b8ff);
+                border:2px solid rgba(0,255,200,.3);
+                display:flex;align-items:center;justify-content:center;
+                font-size:.85rem;text-decoration:none;
+                transition:border-color .2s,box-shadow .2s;
+                flex-shrink:0;
+            " onmouseover="this.style.borderColor='rgba(0,255,200,.7)';this.style.boxShadow='0 0 14px rgba(0,255,200,.35)'"
+               onmouseout="this.style.borderColor='rgba(0,255,200,.3)';this.style.boxShadow='none'">
+                👤
+            </a>
+        </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <div class="category-tabs" id="categoryTabs">
+                <button class="cat-tab active" data-category="all">All</button>
+                <button class="cat-tab" data-category="document">📄 Documents</button>
+                <button class="cat-tab" data-category="code">💻 Code</button>
+                <button class="cat-tab" data-category="image">🖼️ Images</button>
+                <button class="cat-tab" data-category="video">🎥 Video</button>
+                <button class="cat-tab" data-category="audio">🎵 Audio</button>
+                <button class="cat-tab" data-category="archive">📦 Archives</button>
+                <button class="cat-tab" data-category="other">📌 Other</button>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <span class="file-count" id="fileCount">0 files</span>
+            <button class="tb-btn tb-select-btn" id="bulkToggleBtn">☑️ Select</button>
+            <button class="tb-btn tb-upload-btn" id="uploadBtn">📤 Upload</button>
+            <input type="file" id="fileInput" style="display: none;" multiple>
+        </div>
+    </div>
+
+    <!-- SUBCATEGORIES BAR -->
+    <div class="subcategories-bar" id="subcategoriesBar" style="display: none;">
+        <span class="subcategories-label">Subcategories:</span>
+        <div class="subcategories-buttons" id="subcategoryButtons"></div>
+    </div>
+
+    <!-- BULK ACTIONS BAR -->
+    <div class="bulk-toolbar" id="bulkToolbar" style="display: none;">
+        <div class="bulk-toolbar-left">
+            <label class="bulk-select-all-label">
+                <input type="checkbox" id="selectAllCheckbox">
+                <span>All</span>
+            </label>
+            <span class="bulk-selected-count" id="bulkSelectedCount">0 selected</span>
+        </div>
+        <div class="bulk-toolbar-right">
+            <button class="bulk-action-btn bulk-tag-btn" id="bulkTagBtn" disabled>🏷️ Add Tag</button>
+            <button class="bulk-action-btn bulk-remove-tag-btn" id="bulkRemoveTagBtn" disabled>🏷️ Remove Tag</button>
+            <button class="bulk-action-btn bulk-move-btn" id="bulkMoveBtn" disabled>📂 Move</button>
+            <button class="bulk-action-btn bulk-download-btn" id="bulkDownloadBtn" disabled>⬇️ Download</button>
+            <button class="bulk-action-btn bulk-delete-btn" id="bulkDeleteBtn" disabled>🗑️ Delete</button>
+            <button class="bulk-cancel-btn" id="bulkCancelBtn">✖ Cancel</button>
+        </div>
+    </div>
+
+    <!-- MAIN AREA -->
+    <div class="main-container details-closed" id="mainContainer">
+        <main class="content">
+            <div class="scrollable-content">
+                <div class="files-grid" id="filesGrid"></div>
+            </div>
+        </main>
+        <aside class="details-panel hidden" id="detailsPanel">
+            <div class="details-header">
+                <h3 class="details-title">File Details</h3>
+                <button class="close-details-btn" id="closeDetailsBtn" title="Close">✕</button>
+            </div>
+            <div class="details-content" id="detailsContent">
+                <div class="no-selection">
+                    <p class="warning-text">Select a file to view details</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loader"></div>
+        <p class="loading-text">Processing…</p>
+    </div>
+    <div class="details-overlay" id="detailsOverlay" style="display: none;"></div>
+
+    <script>window.__NEXUS_ROLE__ = "{{ user_role }}";</script>
+    <script>
+      // Restrict UI for viewer role
+      if (window.__NEXUS_ROLE__ === 'viewer') {
+        document.addEventListener('DOMContentLoaded', function() {
+          // Analytics menu + bell
+          var analyticsMenu = document.querySelector('.analytics-menu-item');
+          if (analyticsMenu) analyticsMenu.style.display = 'none';
+          var bellBtn = document.getElementById('alertsBellBtn');
+          if (bellBtn) bellBtn.style.display = 'none';
+
+          // File menu: upload + download + delete
+          var menuUploadBtn = document.getElementById('menuUploadBtn');
+          if (menuUploadBtn) menuUploadBtn.style.display = 'none';
+          var menuDownloadSelected = document.getElementById('menuDownloadSelected');
+          if (menuDownloadSelected) menuDownloadSelected.style.display = 'none';
+          var menuDeleteSelected = document.getElementById('menuDeleteSelected');
+          if (menuDeleteSelected) menuDeleteSelected.style.display = 'none';
+
+          // File menu separator after upload (first sep)
+          var fileDdItems = document.querySelectorAll('.menu-item:first-child .menu-dd-sep');
+          if (fileDdItems[0]) fileDdItems[0].style.display = 'none';
+
+          // Edit menu: all editor actions
+          var editMenu = document.querySelectorAll('.menubar-nav .menu-item')[1];
+          if (editMenu) editMenu.style.display = 'none';
+
+          // Manage menu: categories
+          var manageMenu = document.getElementById('menuManageCategories');
+          if (manageMenu) manageMenu.closest('.menu-item').style.display = 'none';
+
+          // Toolbar: upload button + select button
+          var uploadBtn = document.getElementById('uploadBtn');
+          if (uploadBtn) uploadBtn.style.display = 'none';
+          var bulkToggleBtn = document.getElementById('bulkToggleBtn');
+          if (bulkToggleBtn) bulkToggleBtn.style.display = 'none';
+
+          // Bulk toolbar download + delete + tag + move buttons
+          var bulkDownloadBtn = document.getElementById('bulkDownloadBtn');
+          if (bulkDownloadBtn) bulkDownloadBtn.style.display = 'none';
+          var bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+          if (bulkDeleteBtn) bulkDeleteBtn.style.display = 'none';
+          var bulkTagBtn = document.getElementById('bulkTagBtn');
+          if (bulkTagBtn) bulkTagBtn.style.display = 'none';
+          var bulkRemoveTagBtn = document.getElementById('bulkRemoveTagBtn');
+          if (bulkRemoveTagBtn) bulkRemoveTagBtn.style.display = 'none';
+          var bulkMoveBtn = document.getElementById('bulkMoveBtn');
+          if (bulkMoveBtn) bulkMoveBtn.style.display = 'none';
+        });
+      }
+    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}?v=6"></script>
+</body>
+</html>

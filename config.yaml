@@ -1,0 +1,684 @@
+# ============================================================
+#  config.yaml — єдине джерело правди для класифікатора файлів
+#  Всі категорії, підкатегорії, розширення, теги і параметри
+#  навчання зберігаються тут. Модулі не містять хардкоду.
+# ============================================================
+
+# ── Параметри датасету ───────────────────────────────────────
+dataset:
+  total_samples: 100_000
+  train_ratio: 0.9
+  typo_probability: 0.2         # ймовірність опечатки в токені
+  confusion_probability: 0.2    # ймовірність "confusion" імені
+  extra_token_probability: 0.4  # додати другий токен з домену
+  generic_token_probability: 0.5
+  year_probability: 0.3
+  no_extension_probability: 0.1
+  noise_remove_tag_probability: 0.1
+  noise_add_wrong_tag_probability: 0.05
+  generic_tag_probability: 0.4
+  category_tag_skip_probability: 0.1  # НЕ додавати категорію як тег
+
+# ── Параметри моделі ─────────────────────────────────────────
+model:
+  encoder_name: "all-MiniLM-L6-v2"
+  batch_size: 128
+  tag_threshold: 0.4            # поріг впевненості для тегів
+
+  category_grid:
+    C: [0.1, 1.0, 3.0]
+    solver: ["lbfgs"]
+    max_iter: 3000
+
+  tag_grid:
+    estimator__C: [0.3, 1.0, 3.0]
+    max_iter: 3000
+
+# ── Категорії та їх розширення файлів ───────────────────────
+#  category_name → список розширень
+#  Використовується AI для навчання (generate_dataset / semantic_model).
+extension_map:
+  audio:      ["mp3", "wav", "flac", "aac", "ogg", "m4a"]
+  video:      ["mp4", "mov", "mkv", "avi", "webm", "wmv", "pptx", "ppt"]
+  image:      ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg", "tiff"]
+  document:   ["pdf", "docx", "doc", "txt", "odt", "rtf", "md"]
+  spreadsheet: ["xlsx", "xls", "ods"]
+  data:       ["csv", "json", "xml", "yaml", "parquet", "jsonl"]
+  archive:    ["zip", "tar", "gz", "rar", "7z", "bz2"]
+  code:       ["py", "js", "ts", "java", "go", "rs", "cpp", "c", "rb", "php", "swift", "kt"]
+  database:   ["sql", "db", "sqlite", "mdb"]
+
+# ── Маппінг розширення → базова категорія (для FileRecord) ───
+#  Найвищий пріоритет при класифікації в app.py.
+#  Потрібен для розширень, чия AI-категорія відрізняється від базової
+#  (spreadsheet, data, database не є базовими категоріями → document).
+#  Якщо розширення тут є — воно ЗАВЖДИ перекриває AI-результат.
+extension_to_base_category:
+  # Audio
+  mp3:     audio
+  wav:     audio
+  flac:    audio
+  aac:     audio
+  ogg:     audio
+  m4a:     audio
+  # Video
+  mp4:     video
+  mov:     video
+  mkv:     video
+  avi:     video
+  webm:    video
+  wmv:     video
+  # Presentations → video
+  pptx:    video
+  ppt:     video
+  # Image
+  jpg:     image
+  jpeg:    image
+  png:     image
+  gif:     image
+  bmp:     image
+  webp:    image
+  svg:     image
+  tiff:    image
+  # Archive
+  zip:     archive
+  tar:     archive
+  gz:      archive
+  rar:     archive
+  7z:      archive
+  bz2:     archive
+  # Code
+  py:      code
+  js:      code
+  ts:      code
+  java:    code
+  go:      code
+  rs:      code
+  cpp:     code
+  c:       code
+  rb:      code
+  php:     code
+  swift:   code
+  kt:      code
+  # Document
+  pdf:     document
+  docx:    document
+  doc:     document
+  txt:     document
+  odt:     document
+  rtf:     document
+  md:      document
+  # Spreadsheet → document
+  xlsx:    document
+  xls:     document
+  ods:     document
+  # Data → document
+  csv:     document
+  json:    document
+  xml:     document
+  yaml:    document
+  parquet: document
+  jsonl:   document
+  # Database → document
+  sql:     document
+  db:      document
+  sqlite:  document
+  mdb:     document
+
+# ── Токени для генерації датасету (за доменами) ──────────────
+token_pools:
+  business:
+    - report
+    - audit
+    - budget
+    - invoice
+    - contract
+    - звіт
+    - аудит
+    - рахунок
+    - договір
+    - кошторис
+    - акт
+    - протокол
+
+  it:
+    - api
+    - backend
+    - frontend
+    - auth
+    - config
+    - service
+    - schema
+    - migration
+    - код
+    - скрипт
+    - сервер
+    - deployment
+    - pipeline
+
+  education:
+    - lecture
+    - course
+    - exam
+    - thesis
+    - лекція
+    - курс
+    - іспит
+    - дисертація
+    - завдання
+    - практика
+
+  media:
+    - recording
+    - meeting
+    - demo
+    - presentation
+    - запис
+    - зустріч
+    - презентація
+    - вебінар
+    - нарада
+
+generic_tokens:
+  - final
+  - draft
+  - v1
+  - v2
+  - v3
+  - old
+  - new
+  - internal
+  - external
+  - tmp
+  - backup
+  - copy
+  - archive
+
+confusion_names:
+  - report_video
+  - meeting_notes
+  - code_review
+  - presentation_recording
+  - video_report
+  - data_backup
+  - audio_transcript
+  - image_report
+
+generic_tags:
+  - work
+  - important
+  - confidential
+  - project
+  - personal
+  - shared
+  - reviewed
+
+# ── Маппінг токенів → семантичні теги (для генерації датасету) ──
+tag_rules:
+  report:       [report]
+  звіт:         [report]
+  audit:        [audit]
+  аудит:        [audit]
+  invoice:      [finance]
+  рахунок:      [finance]
+  budget:       [finance]
+  кошторис:     [finance]
+  lecture:      [education]
+  лекція:       [education]
+  course:       [education]
+  курс:         [education]
+  exam:         [education]
+  іспит:        [education]
+  meeting:      [meeting]
+  зустріч:      [meeting]
+  нарада:       [meeting]
+  code:         [code]
+  скрипт:       [code]
+  api:          [code]
+  backend:      [code]
+  frontend:     [code]
+  presentation: [presentation]
+  презентація:  [presentation]
+  backup:       [backup]
+  archive:      [backup]
+  recording:    [recording]
+  запис:        [recording]
+  demo:         [demo]
+  contract:     [contract]
+  договір:      [contract]
+  schema:       [database]
+  migration:    [database]
+  sql:          [database]
+
+# ── Підкатегорії для inference ───────────────────────────────
+#  category → subcategory → список ключових слів
+subcategory_rules:
+  document:
+    reports:
+      - report
+      - summary
+      - звіт
+      - звит
+      - підсумок
+      - протокол
+      - акт
+    tables:
+      - table
+      - spreadsheet
+      - excel
+      - sheet
+      - таблиця
+      - ексель
+      - аркуш
+    audit:
+      - audit
+      - inspection
+      - review
+      - аудит
+      - перевірка
+      - інспекція
+    finance:
+      - invoice
+      - budget
+      - finance
+      - tax
+      - рахунок
+      - бюджет
+      - фінанси
+      - податок
+      - платіж
+      - кошторис
+    contracts:
+      - contract
+      - agreement
+      - nda
+      - договір
+      - угода
+      - контракт
+      - домовленість
+    instructions:
+      - instruction
+      - manual
+      - guide
+      - policy
+      - інструкція
+      - керівництво
+      - посібник
+      - політика
+      - документація
+    text:
+      - text
+      - notes
+      - draft
+      - текст
+      - нотатки
+      - чернетка
+      - документ
+
+  code:
+    backend:
+      - backend
+      - api
+      - server
+      - django
+      - flask
+      - fastapi
+      - express
+    frontend:
+      - frontend
+      - ui
+      - client
+      - react
+      - html
+      - css
+      - vue
+      - angular
+    database:
+      - sql
+      - schema
+      - migration
+      - db
+      - orm
+    scripts:
+      - script
+      - automation
+      - cron
+      - cli
+    configs:
+      - config
+      - settings
+      - env
+      - dotenv
+
+  video:
+    tutorials:
+      - tutorial
+      - lesson
+      - course
+      - training
+      - education
+      - educational
+      - learn
+      - урок
+      - навчання
+      - курс
+      - тренінг
+      - освіта
+      - навчальний
+    presentations:
+      - presentation
+      - demo
+      - pitch
+      - презентація
+      - демо
+      - демонстрація
+    meetings:
+      - meeting
+      - call
+      - zoom
+      - conference
+      - нарада
+      - зустріч
+      - дзвінок
+      - конференція
+      - вебінар
+    recordings:
+      - recording
+      - webinar
+      - capture
+      - запис
+      - записано
+      - захоплення
+
+  audio:
+    music:
+      - music
+      - song
+      - track
+      - sound
+      - музика
+      - пісня
+      - трек
+      - звук
+    learning:
+      - lecture
+      - lesson
+      - training
+      - course
+      - education
+      - educational
+      - learn
+      - tutorial
+      - лекція
+      - урок
+      - навчання
+      - курс
+      - освіта
+      - навчальний
+    interview:
+      - interview
+      - podcast
+      - talk
+      - інтервю
+      - подкаст
+      - розмова
+      - обговорення
+    meetings:
+      - meeting
+      - call
+      - recording
+      - нарада
+      - зустріч
+      - дзвінок
+      - запис
+
+  image:
+    screenshots:
+      - screenshot
+      - screen
+      - capture
+      - скріншот
+      - знімок
+      - захоплення
+      - екран
+    design:
+      - design
+      - mockup
+      - ui
+      - layout
+      - дизайн
+      - макет
+      - графіка
+      - шаблон
+    photos:
+      - photo
+      - image
+      - picture
+      - фото
+      - зображення
+      - картинка
+      - світлина
+
+  archive:
+    backups:
+      - backup
+      - snapshot
+      - restore
+      - бекап
+      - резервна
+      - копія
+      - відновлення
+    releases:
+      - release
+      - build
+      - package
+      - реліз
+      - випуск
+      - збірка
+      - версія
+    datasets:
+      - dataset
+      - data
+      - export
+      - дані
+      - набір
+      - експорт
+      - вивантаження
+      - датасет
+
+# ── Flask-додаток ────────────────────────────────────────────
+app:
+  upload_folder: "uploads"
+  data_file: "cyberpunk_data.json"
+  max_upload_mb: 500          # максимальний розмір файлу в мегабайтах
+  host: "0.0.0.0"
+  port: 5000
+  debug: true
+
+# ── Базові (системні) категорії ──────────────────────────────
+#  id       — використовується в коді та API
+#  label    — відображається у фронтенді
+#  emoji    — іконка категорії
+#  builtin  — true = не можна видалити через API
+base_categories:
+  - id: document
+    label: "DOCUMENTS"
+    emoji: "📄"
+    builtin: true
+  - id: code
+    label: "CODE"
+    emoji: "💻"
+    builtin: true
+  - id: image
+    label: "IMAGES"
+    emoji: "🖼️"
+    builtin: true
+  - id: video
+    label: "VIDEO"
+    emoji: "🎥"
+    builtin: true
+  - id: audio
+    label: "AUDIO"
+    emoji: "🎵"
+    builtin: true
+  - id: archive
+    label: "ARCHIVES"
+    emoji: "📦"
+    builtin: true
+  - id: other
+    label: "OTHER"
+    emoji: "📌"
+    builtin: true
+
+# ── Маппінг тег → категорія (для infer_categories_from_tags) ─
+#  Використовується у app.py щоб вивести категорію з тегів.
+tag_to_category:
+  # code
+  code:        code
+  python:      code
+  java:        code
+  javascript:  code
+  typescript:  code
+  backend:     code
+  frontend:    code
+  api:         code
+  script:      code
+  programming: code
+  # document
+  document:    document
+  pdf:         document
+  doc:         document
+  docx:        document
+  report:      document
+  audit:       document
+  spreadsheet: document
+  data:        document
+  table:       document
+  excel:       document
+  csv:         document
+  finance:     document
+  invoice:     document
+  contract:    document
+  agreement:   document
+  instruction: document
+  manual:      document
+  text:        document
+  notes:       document
+  документ:    document
+  звіт:        document
+  аудит:       document
+  таблиця:     document
+  рахунок:     document
+  договір:     document
+  # video
+  video:       video
+  movie:       video
+  clip:        video
+  recording:   video
+  tutorial:    video
+  presentation: video
+  meeting:     video
+  # image
+  image:       image
+  photo:       image
+  png:         image
+  jpg:         image
+  jpeg:        image
+  picture:     image
+  screenshot:  image
+  design:      image
+  # audio
+  audio:       audio
+  music:       audio
+  sound:       audio
+  lecture:     audio
+  podcast:     audio
+  song:        audio
+  # archive
+  archive:     archive
+  backup:      archive
+  zip:         archive
+  compressed:  archive
+
+# ── Нормалізація тегів (синоніми → канонічна форма) ──────────
+#  Додай сюди локалізовані або застарілі варіанти тегів
+tag_synonyms:
+  аудіо:     audio
+  звук:      audio
+  відео:     video
+  зображення: image
+  фото:      image
+  документ:  document
+  код:       code
+  архів:     archive
+
+# ── Транслітерація кирилиці → латиниця ──────────────────────
+#  Використовується у prepare_filename_for_ai()
+#  Стандарт: КМУ 2010 (українська офіційна транслітерація)
+transliteration:
+  а: a
+  б: b
+  в: v
+  г: h
+  ґ: g
+  д: d
+  е: e
+  є: ie
+  ж: zh
+  з: z
+  и: y
+  і: i
+  ї: i
+  й: i
+  к: k
+  л: l
+  м: m
+  н: n
+  о: o
+  п: p
+  р: r
+  с: s
+  т: t
+  у: u
+  ф: f
+  х: kh
+  ц: ts
+  ч: ch
+  ш: sh
+  щ: shch
+  ь: ""
+  ю: iu
+  я: ia
+  А: A
+  Б: B
+  В: V
+  Г: H
+  Ґ: G
+  Д: D
+  Е: E
+  Є: Ie
+  Ж: Zh
+  З: Z
+  И: Y
+  І: I
+  Ї: I
+  Й: I
+  К: K
+  Л: L
+  М: M
+  Н: N
+  О: O
+  П: P
+  Р: R
+  С: S
+  Т: T
+  У: U
+  Ф: F
+  Х: Kh
+  Ц: Ts
+  Ч: Ch
+  Ш: Sh
+  Щ: Shch
+  Ь: ""
+  Ю: Iu
+  Я: Ia
